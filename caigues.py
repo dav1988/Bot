@@ -36,44 +36,26 @@ def button(bot, update):
     global llista
     global nollista
     global count
-    query = update.callback_query
-    #print query
-    nom=str(query)
-
+    query = update.callback_query 
     ### Obtenció ID user ###
-    #comes=nom.split("from")    
-    #nom=comes[1].split("'")
-    #x=0
-    #for n in nom:
-    #    if n == 'id':
-    #        nom=nom[x+1]
-    #        nom=nom.split(" ")
-    #        nom=nom[1].split(",")
-    #        iduser=nom[0]
-    #    else:
-    #        x=x+1
-    #print iduser
-    
-    #obtenim la id de l'usuari. Dona error amb el josep. Cal repasar-ho
-    comes=comes[3].split(" ")
-    iduser=comes[2]
-    #print iduser
-    iduser=id_users(str(iduser),personal)
-
+    nom=str(query)
+    nom = nom.split(",")
+    print str(nom[2])
+    if str(nom[2])== " 'is_bot': False":
+        iduser=nom[3]
+    else:
+        iduser=nom[4]
+    print iduser
     print " opcio "+str(query.data)
     if str(query.data)=="1" and iduser not in llista:        
         llista.append(iduser)
         print "l'infermer/a "+ iduser +" va a socorrer a l'avi, fa falta un/a segon/a infermer/a"
-        #editar missatge enquesta (ha de ser com el print)
-
         keyboard = [[InlineKeyboardButton("✅ Vaig a assistir-lo", callback_data='1'), InlineKeyboardButton("❌ No puc atendre'l", callback_data='2')]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         bot.editMessageText(text=query_text+ '\n ✅' + iduser , chat_id=query.message.chat_id, message_id=query.message.message_id,reply_markup=reply_markup)
-
         print llista
 
         if len(llista)==2:
-            #falta afegir identificador caiguda
             bot.editMessageText(text="Els/Les infermers/es " + llista[0] + " i " + llista[1] + " van a socorrer l'avi (fulanito) que ha caigut" , chat_id=query.message.chat_id, message_id=query.message.message_id)
             llista=[]
             nollista=[]
@@ -91,7 +73,7 @@ def button(bot, update):
             llista.remove(iduser)
             count=count-1
             print "l'infermer/a "+ iduser +" ja NO va a socorrer a l'avi, fan falta dos infermers/es"
-            #editar missatge enquesta (com el print)
+
     else:
         print "l'usuari "+ iduser +" és un cansino"
 
@@ -147,6 +129,7 @@ except Exception as error:
 # Relació de id's i noms de treballadors. ->BD
 # Agafar directament els noms pot donar problemes de coincidencies. Millors utilitzar els id's i establir un nom per a cada treballador.-> BD
 # Definir funció que mitjançant una senyal pel port serie realitzi l'enquesta
+# ID caiguda, localització, Id avi
 # Editar missatge ajuda. Afegir estat dels pacients.
 # Opció stop per parar l'enquesta
 # Temporitzador 5 min?
