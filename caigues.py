@@ -5,6 +5,7 @@
  
 import logging
 import time
+import random
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 from fitxer import id_users, personal
@@ -13,7 +14,8 @@ llista=[]
 nollista=[]
 count=0
 personal=personal()
-query_text="Ha caigut el iaio 'xxxxxx' al 'lloc caiguda', necessita l'assistencia de 2 infermers/es"
+idiaio=random.randrange(10)
+query_text="Ha caigut el l'avi " + str(idiaio) + " al 'lloc caiguda', necessita l'assistencia de 2 infermers/es"
  
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -49,13 +51,12 @@ def button(bot, update):
     ########################
     if str(query.data)=="1" and str(iduser) not in llista:        
         llista.append(str(iduser))
-        #print "l'infermer/a "+ iduser +" va a socorrer a l'avi, fa falta un/a segon/a infermer/a"
         keyboard = [[InlineKeyboardButton("✅ Vaig a assistir-lo", callback_data='1'), InlineKeyboardButton("❌ No puc atendre'l", callback_data='2')]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         bot.editMessageText(text=query_text+ '\n ✅' + iduser , chat_id=query.message.chat_id, message_id=query.message.message_id,reply_markup=reply_markup)
         print "l'infermer/a "+ iduser +" va a socorrer a l'avi, fa falta un/a segon/a infermer/a"
         if len(llista)==2:
-            bot.editMessageText(text="Els/Les infermers/es " + llista[0] + " i " + llista[1] + " van a socorrer l'avi (fulanito) que ha caigut" , chat_id=query.message.chat_id, message_id=query.message.message_id)
+            bot.editMessageText(text="Els/Les infermers/es " + llista[0] + " i " + llista[1] + " van a socorrer l'avi "+str(idiaio)+" que ha caigut" , chat_id=query.message.chat_id, message_id=query.message.message_id)
             llista=[]
             nollista=[]
         elif str(iduser) in nollista:
@@ -88,7 +89,7 @@ def stop(bot, update):
 
     
 def help(bot, update):
-    update.message.reply_text("Use /query to test this bot.")
+    update.message.reply_text("Contacta amb el servei tècnic")
 
     
  
@@ -100,7 +101,7 @@ def error(bot, update, error):
 
 
 
-# Create the Updater and pass it your bot's token.
+# Crea el Updater i pas del nostre token del bot.
 updater = Updater("697741163:AAEIsJnN3fQehIhrXI_TjgzgwM0jMJlD7FE")
  
 updater.dispatcher.add_handler(CommandHandler('query', start))
@@ -110,12 +111,12 @@ updater.dispatcher.add_handler(CommandHandler('help', help))
 updater.dispatcher.add_error_handler(error)
 
 try:
-	# Start the Bot
+	# Inicia el bot
 	print "inicialitzant bot [...]"	
 	updater.start_polling()
 	print "bot actiu"
 
-	# Stop the Bot 
+	# Parar el bot 
 	updater.idle()
 except Exception as error:
 	print ("Connectant amb el Bot de Telegram -> ERROR")
