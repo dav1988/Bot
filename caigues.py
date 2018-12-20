@@ -40,42 +40,43 @@ def button(bot, update):
     ### Obtenció ID user ###
     nom=str(query)
     nom = nom.split(",")
-    print str(nom[2])
     if str(nom[2])== " 'is_bot': False":
         iduser=nom[3]
     else:
         iduser=nom[4]
-    print iduser
-    print " opcio "+str(query.data)
-    if str(query.data)=="1" and iduser not in llista:        
-        llista.append(iduser)
-        print "l'infermer/a "+ iduser +" va a socorrer a l'avi, fa falta un/a segon/a infermer/a"
+    iduser=iduser.split(" ")
+    iduser=iduser[2]
+    ########################
+    if str(query.data)=="1" and str(iduser) not in llista:        
+        llista.append(str(iduser))
+        #print "l'infermer/a "+ iduser +" va a socorrer a l'avi, fa falta un/a segon/a infermer/a"
         keyboard = [[InlineKeyboardButton("✅ Vaig a assistir-lo", callback_data='1'), InlineKeyboardButton("❌ No puc atendre'l", callback_data='2')]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         bot.editMessageText(text=query_text+ '\n ✅' + iduser , chat_id=query.message.chat_id, message_id=query.message.message_id,reply_markup=reply_markup)
-        print llista
-
+        print "l'infermer/a "+ iduser +" va a socorrer a l'avi, fa falta un/a segon/a infermer/a"
         if len(llista)==2:
             bot.editMessageText(text="Els/Les infermers/es " + llista[0] + " i " + llista[1] + " van a socorrer l'avi (fulanito) que ha caigut" , chat_id=query.message.chat_id, message_id=query.message.message_id)
             llista=[]
             nollista=[]
+        elif str(iduser) in nollista:
+            nollista.remove(str(iduser))
         
     elif str(query.data)=="2":
-        if iduser not in nollista:
+        if str(iduser) not in nollista:
             nollista.append(iduser)
             keyboard = [[InlineKeyboardButton("✅ Vaig a assistir-lo", callback_data='1'), InlineKeyboardButton("❌ No puc atendre'l", callback_data='2')]]
             reply_markup = InlineKeyboardMarkup(keyboard)
             bot.editMessageText(text=query_text +'\n ❌' + iduser, chat_id=query.message.chat_id, message_id=query.message.message_id, reply_markup=reply_markup)
-
+            if str(iduser) in llista:
+                llista.remove(str(iduser))
+                count=count-1
+                print "l'infermer/a "+ iduser +" ja NO va a socorrer a l'avi, fan falta dos infermers/es"
         else:
             print iduser + " ja sabem que no hi vas"
-        if iduser in llista:
-            llista.remove(iduser)
-            count=count-1
-            print "l'infermer/a "+ iduser +" ja NO va a socorrer a l'avi, fan falta dos infermers/es"
+
 
     else:
-        print "l'usuari "+ iduser +" és un cansino"
+        print "usuari "+ iduser +" ja sabem que vas a socorre l'avi"
 
 
         
@@ -99,7 +100,6 @@ def error(bot, update, error):
 
 
 
- 
 # Create the Updater and pass it your bot's token.
 updater = Updater("697741163:AAEIsJnN3fQehIhrXI_TjgzgwM0jMJlD7FE")
  
